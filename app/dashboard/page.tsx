@@ -1,3 +1,4 @@
+// @ts-ignore
 import SectorTable from "./components/fii/sector-table";
 import { sectorColumns } from "./components/fii/sector-columns";
 import { getCDSLData } from "../lib/cdsl";
