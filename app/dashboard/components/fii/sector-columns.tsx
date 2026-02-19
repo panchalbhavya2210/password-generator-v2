@@ -3,10 +3,10 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { SectorFlow } from "@/app/types/sector";
 
-const format = (v: number) =>
+export const format = (v: number) =>
   `₹${v.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 
-const valueCell = (value: number) => (
+export const valueCell = (value: number) => (
   <span
     className={`font-semibold ${
       value > 0

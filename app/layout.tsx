@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { cookies } from "next/headers";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import Providers from "./providers/provider";
 
 const poppins = Poppins({
   variable: "--font-poppins-sans",
@@ -34,7 +35,9 @@ export default async function RootLayout({
       className={`${themeClass} ${radius === "rounded" ? "radius-rounded" : "radius-square"}`}
     >
       <body className={`${poppins.variable} antialiased`}>
-        <TooltipProvider>{children}</TooltipProvider>
+        <Providers>
+          <TooltipProvider>{children}</TooltipProvider>
+        </Providers>
       </body>
     </html>
   );
