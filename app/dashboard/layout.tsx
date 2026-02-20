@@ -1,9 +1,6 @@
 "use client";
 
 import { AppSidebar } from "@/components/app-sidebar";
-import { Button } from "@/components/ui/button";
-
-import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
@@ -29,7 +26,7 @@ export default function DashboardLayout({
             <RunScraperButton />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-x-hidden overflow-y-hidden">
+        <div className="flex flex-1 flex-col gap-4 p-2 pt-0 overflow-x-hidden overflow-y-hidden">
           {children}
         </div>
       </SidebarInset>

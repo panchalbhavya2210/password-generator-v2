@@ -57,7 +57,7 @@ const renderValueLabel = (props: any) => {
 };
 
 export default function SectorChart({ data }: Props) {
-  const [period, setPeriod] = useState<Period>("30D");
+  const [period, setPeriod] = useState<Period>("15D");
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const isLoading = !data || data.length === 0;
