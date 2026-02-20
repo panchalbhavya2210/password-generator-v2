@@ -4,7 +4,6 @@ const NSE = "https://www.nseindia.com";
 
 export async function GET() {
   try {
-    // 1️⃣ First request — obtain NSE cookies
     const home = await fetch(NSE, {
       method: "GET",
       headers: {
@@ -20,7 +19,6 @@ export async function GET() {
     const cookie = home.headers.get("set-cookie");
     if (!cookie) throw new Error("No cookie received");
 
-    // 2️⃣ Actual API call
     const api = await fetch(`${NSE}/api/allIndices`, {
       method: "GET",
       headers: {

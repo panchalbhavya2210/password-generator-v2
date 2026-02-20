@@ -26,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
 
 export default function IndustryTable({ columns, data }) {
   const router = useRouter();
@@ -38,6 +39,7 @@ export default function IndustryTable({ columns, data }) {
       sorting,
       columnFilters,
     },
+    columnResizeMode: "onChange",
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
 
@@ -94,16 +96,31 @@ export default function IndustryTable({ columns, data }) {
         </div>
       </div>
 
-      <Table>
+      <Table className="table-fixed w-full">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
+                  style={{
+                    width: header.getSize(),
+                  }}
                   onClick={header.column.getToggleSortingHandler()}
-                  className="cursor-pointer select-none"
+                  className="cursor-pointer select-none relative"
                 >
+                  <div
+                    onMouseDown={header.getResizeHandler()}
+                    onTouchStart={header.getResizeHandler()}
+                    className={`
+                      absolute right-0 top-0 h-full w-2 cursor-col-resize
+                      select-none touch-none
+                      bg-transparent hover:bg-primary
+                      ${header.column.getIsResizing() ? "bg-primary" : ""}
+                    `}
+                  >
+                    <Separator className="w-2 h-full" orientation="vertical" />
+                  </div>
                   <div className="flex items-center gap-2">
                     {flexRender(
                       header.column.columnDef.header,
@@ -128,7 +145,12 @@ export default function IndustryTable({ columns, data }) {
               className="hover:bg-muted/40"
             >
               {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
+                <TableCell
+                  key={cell.id}
+                  style={{
+                    width: cell.column.getSize(),
+                  }}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}
