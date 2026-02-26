@@ -76,8 +76,8 @@ export default function IndexPage() {
         </Card>
         <Card className="w-full p-4">
           <AdvanceDeclineBar
-            advances={data.advance.advances}
-            declines={data.advance.declines}
+            advances={data.advance?.advances}
+            declines={data.advance?.declines}
             unchanged={data.metadata.unchanged}
           />
         </Card>

@@ -152,7 +152,7 @@ export const useIndicesStore = create<IndicesStore>((set, get) => ({
     const decoded = decodeURIComponent(index);
 
     if (get().indices[decoded]) return;
-
+    const filterOutSpecifiIndex = ["NIFTY 50"];
     try {
       set((state) => ({
         loading: { ...state.loading, [decoded]: true },
@@ -166,7 +166,6 @@ export const useIndicesStore = create<IndicesStore>((set, get) => ({
       if (!res.ok) throw new Error("Fetch failed");
 
       const json: NiftyIndexResponse = await res.json();
-
       set((state) => ({
         indices: { ...state.indices, [decoded]: json },
         loading: { ...state.loading, [decoded]: false },

@@ -33,6 +33,8 @@ export interface AllIndices {
   chart365dPath: string;
   chart30dPath: string;
   chartTodayPath: string;
+
+  setIndices: (data: Partial<AllIndices>) => void;
 }
 
 export const useIndustryStore = create<AllIndices>((set) => ({
@@ -68,4 +70,6 @@ export const useIndustryStore = create<AllIndices>((set) => ({
   chart365dPath: "",
   chart30dPath: "",
   chartTodayPath: "",
+
+  setIndices: (data) => set((state) => ({ ...state, ...data })),
 }));

@@ -36,12 +36,9 @@ function calculateAdvanceDecline(
   unchanged: Number = 0,
 ) {
   const total = parseInt(advances) + parseInt(declines);
-  console.log(total, "tot");
   if (total === 0) return { advancePct: 0, declinePct: 0 };
-  console.log(advances, declines, unchanged, "fj");
   const advancePct = (advances / total) * 100;
   const declinePct = (declines / total) * 100;
-  console.log(advancePct, declinePct);
   return {
     advancePct,
     declinePct,
@@ -67,13 +64,14 @@ function ToolTipAsComp({ child }) {
 
 export const IndustryColums: ColumnDef<AllIndices>[] = [
   {
-    accessorKey: "Sector",
+    id: "sector",
+    accessorFn: (row) => row.index,
     header: () => (
       <div className="flex items-center gap-2">
         <span>Sector</span>
         <ToolTipAsComp
           child="Sector index representing grouped companies belonging to the same industry
-        (IT, Banks, Auto, Pharma etc). Click a row to open detailed breadth and valuation."
+      (IT, Banks, Auto, Pharma etc). Click a row to open detailed breadth and valuation."
         />
       </div>
     ),
@@ -87,12 +85,46 @@ export const IndustryColums: ColumnDef<AllIndices>[] = [
     ),
   },
   {
+    accessorKey: "LTP",
+    header: () => (
+      <div className="flex items-center gap-2">
+        <span>LTP</span>
+        <ToolTipAsComp child="Latest Traded Price (LTP): The real-time price of the most recent executed trade. It changes whenever a new buy-sell transaction occurs in the market and represents the current trading value, unlike the previous day’s closing price." />
+      </div>
+    ),
+    size: 180,
+    minSize: 160,
+    maxSize: 190,
+    cell: ({ row }) => (
+      <div className="font-medium sticky left-0 bg-background pr-4">
+        {row.original.last}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "PE Ratio",
+    header: () => (
+      <div className="flex items-center gap-2">
+        <span>PE Ratio</span>
+        <ToolTipAsComp child="Latest Traded Price (LTP): The real-time price of the most recent executed trade. It changes whenever a new buy-sell transaction occurs in the market and represents the current trading value, unlike the previous day’s closing price." />
+      </div>
+    ),
+    size: 180,
+    minSize: 160,
+    maxSize: 190,
+    cell: ({ row }) => (
+      <div className="font-medium sticky left-0 bg-background pr-4">
+        {row.original.pe}
+      </div>
+    ),
+  },
+  {
     accessorKey: "Advance/Declines",
     header: () => (
       <div className="flex items-center gap-2">
-        <span>Sector</span>
+        <span>A/D</span>
         <ToolTipAsComp
-          child="Market breadth indicator. Shows how many stocks in the sector are rising
+          child="Advance/Decline Ratio - Market breadth indicator. Shows how many stocks in the sector are rising
         versus falling. Strong sectors have more advancing stocks."
         />
       </div>

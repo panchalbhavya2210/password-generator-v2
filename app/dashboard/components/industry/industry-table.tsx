@@ -66,11 +66,10 @@ export default function IndustryTable({ columns, data }) {
       <div className="p-4 border-b bg-muted/30 flex items-center justify-between gap-4 max-md:flex-wrap">
         <Input
           placeholder="Search sector... (IT, Bank, Metal)"
-          value={(table.getColumn("Sector")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("sector")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("Sector")?.setFilterValue(event.target.value)
+            table.getColumn("sector")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm max-md:w-full"
         />
 
         <div className="flex items-center gap-2">
