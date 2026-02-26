@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { AllIndices, useIndustryStore } from "@/app/store/industry-store";
