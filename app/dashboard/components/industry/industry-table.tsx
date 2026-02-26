@@ -126,8 +126,8 @@ export default function IndustryTable({ columns, data }) {
                       header.getContext(),
                     )}
                     {{
-                      asc: "ArrowUpIcon",
-                      desc: "ArrowDownIcon",
+                      asc: <ArrowUpIcon size={15} />,
+                      desc: <ArrowDownIcon size={15} />,
                     }[header.column.getIsSorted() as string] ?? ""}
                   </div>
                 </TableHead>
