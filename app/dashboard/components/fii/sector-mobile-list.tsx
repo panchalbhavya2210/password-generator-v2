@@ -10,9 +10,31 @@ type Props = {
   period: Period;
 };
 
+import { SectorTableRow } from "@/app/types/net-investment";
+
+function adaptTableRows(rows: SectorTableRow[]): SectorFlow[] {
+  return rows.map((r) => ({
+    Sector: r.sector,
+    "15D": r["15D"],
+    "30D": r["30D"],
+    "90D": r["90D"],
+    "180D": r["180D"],
+    "360D": r["365D"],
+  }));
+}
+function isTableRow(data: any[]): data is SectorTableRow[] {
+  return data.length > 0 && "sector" in data[0];
+}
+
 export default function SectorMobileList({ data, period }: Props) {
   const movers = useMemo(() => {
-    return calculateSectorMovers(data, period);
+    if (!data || data.length === 0) return [];
+
+    const normalized: SectorFlow[] = isTableRow(data)
+      ? adaptTableRows(data)
+      : data;
+
+    return calculateSectorMovers(normalized, period);
   }, [data, period]);
 
   return (

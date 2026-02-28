@@ -11,6 +11,7 @@ const columnHelper = createColumnHelper<SectorTableRow>();
 export const NetInvestmentColumns = [
   columnHelper.accessor("sector", {
     header: "Symbol",
+    minSize: 300,
     cell: (info) => {
       const label = info.getValue();
       const href = getNseIndexUrl(label);
