@@ -1,7 +1,5 @@
-// @ts-nocheck
 "use client";
 
-import { useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,9 +10,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { exportTableToExcel } from "@/app/lib/export-to-excel";
-import { ArrowDownIcon, ArrowUpIcon, Download, X } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -23,39 +19,41 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowDownIcon, ArrowUpIcon, Download, X } from "lucide-react";
+import { exportTableToExcel } from "@/app/lib/export-to-excel";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface EquityDataProps<TData extends object> {
+  columns: ColumnDef<TData, any>[];
   data: TData[];
 }
 
-export default function IndustryTable<TData, TValue>({
+export default function EquityTable<TData extends object>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: EquityDataProps<TData>) {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
-    data: data?.data || [],
+    data,
     columns,
     state: {
       sorting,
       columnFilters,
     },
-    columnResizeMode: "onChange",
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   });
-
   const clearAll = () => {
     table.resetColumnFilters();
     table.resetSorting();
@@ -65,18 +63,14 @@ export default function IndustryTable<TData, TValue>({
     table.getState().columnFilters.length > 0 ||
     table.getState().sorting.length > 0;
 
-  const buildURI = (symbol: string) => {
-    return `/dashboard/equity-stockindices/${encodeURIComponent(symbol)}`;
-  };
-
   return (
     <div className="rounded-xl border overflow-hidden">
       <div className="p-4 border-b bg-muted/30 flex items-center justify-between gap-4 max-md:flex-wrap">
         <Input
           placeholder="Search sector... (IT, Bank, Metal)"
-          value={(table.getColumn("sector")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("symbol")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("sector")?.setFilterValue(event.target.value)
+            table.getColumn("symbol")?.setFilterValue(event.target.value)
           }
         />
 
@@ -128,11 +122,11 @@ export default function IndustryTable<TData, TValue>({
                     }}
                     onClick={(e) => e.stopPropagation()}
                     className={`
-                      absolute right-0 top-0 h-full w-2 cursor-col-resize
-                      select-none touch-none
-                      bg-transparent hover:bg-primary
-                      ${header.column.getIsResizing() ? "bg-primary" : ""}
-                    `}
+                              absolute right-0 top-0 h-full w-2 cursor-col-resize
+                              select-none touch-none
+                              bg-transparent hover:bg-primary
+                              ${header.column.getIsResizing() ? "bg-primary" : ""}
+                            `}
                   >
                     <Separator className="w-2 h-full" orientation="vertical" />
                   </div>
@@ -156,7 +150,7 @@ export default function IndustryTable<TData, TValue>({
           {table.getRowModel().rows.map((row) => (
             <TableRow
               key={row.id}
-              onClick={() => router.push(buildURI(row?.original?.index))}
+              //   onClick={() => router.push(buildURI(row?.original?.index))}
               className="hover:bg-muted/40"
             >
               {row.getVisibleCells().map((cell) => (

@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 
 import { useEffect } from "react";
@@ -6,9 +5,10 @@ import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useIndicesStore } from "@/app/store/indices-store";
 import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import AdvanceDeclineBar from "../../components/industry/advance-decline";
+import EquityTable from "../../components/equity/equity-table";
+import { EquityColums } from "../../components/equity/equity-column";
 
 export default function IndexPage() {
   const params = useParams();
@@ -18,13 +18,14 @@ export default function IndexPage() {
 
   const data = indices[index];
 
+  const lastFetched = useIndicesStore((s) => s.lastFetched[index]);
+
   useEffect(() => {
     fetchIndex(index);
-  }, [index]);
+  }, [index, lastFetched, fetchIndex]);
 
   if (loading[index]) return <div>Loading...</div>;
   if (!data) return <div>No Data</div>;
-  console.log(data);
   const change = data.metadata.change;
   const isNegative = change < 0;
 
@@ -49,7 +50,7 @@ export default function IndexPage() {
                 <h2
                   className={`text-5xl font-semibold ${isNegative ? "text-red-700" : "text-green-700"}`}
                 >
-                  {parseFloat(data.metadata.last).toFixed(2)}
+                  {Number(data.metadata.last).toFixed(2)}
                 </h2>
               </div>
               <div
@@ -63,7 +64,7 @@ export default function IndexPage() {
                 <div
                   className={`${isNegative ? "text-red-500" : "text-green-500"} flex shrink-0 ml-2 text-sm`}
                 >
-                  {parseFloat(data.metadata.change).toFixed(2)} /&nbsp;
+                  {Number(data.metadata.change).toFixed(2)} /&nbsp;
                   {calculatePercentage(
                     data.metadata.change,
                     data.metadata.last,
@@ -82,6 +83,7 @@ export default function IndexPage() {
           />
         </Card>
       </div>
+      <EquityTable columns={EquityColums} data={data.data} />
     </div>
   );
 }

@@ -3,10 +3,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
-body {
-  font-family: "Poppins", sans-serif;
+@font-face {
+  font-family: "RupeeFix";
+  src: var(--font-roboto);
+  unicode-range: U+20B9;
 }
 
+:root {
+  --font-sans:
+    "RupeeFix", var(--font-poppins), system-ui, -apple-system, Segoe UI,
+    sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+}
 button {
   cursor: pointer;
 }

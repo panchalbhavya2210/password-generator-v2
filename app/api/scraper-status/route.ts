@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  console.log(1);
   const res = await fetch(
     `https://api.github.com/repos/${process.env.GITHUB_AUTHOR_NAME}/${process.env.GITHUB_REPO_NAME}/actions/runs?per_page=1`,
     {

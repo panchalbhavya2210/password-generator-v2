@@ -1,16 +1,18 @@
 import { create } from "zustand";
+import { isMarketOpenNow } from "../lib/market-open";
+import { createJSONStorage, persist } from "zustand/middleware";
 
-// ---------- Advance / Decline ----------
 export interface AdvanceDecline {
-  declines: string; // NSE sends as string
+  declines: string;
   advances: string;
   unchanged: string;
 }
 
 // ---------- Data Array ----------
-export type NiftyDataItem = IndexSummary | EquityStock;
+export type NiftyDataItem =
+  | (IndexSummary & { priority: 1 })
+  | (EquityStock & { priority: 0 });
 
-// ---------- 1️⃣ Index Object (priority: 1) ----------
 export interface IndexSummary {
   priority: 1;
   symbol: string;
@@ -48,9 +50,10 @@ export interface IndexSummary {
   chartTodayPath: string;
   chart30dPath: string;
   chart365dPath: string;
+
+  unchanged: number;
 }
 
-// ---------- 2️⃣ Stock Object (priority: 0) ----------
 export interface EquityStock {
   priority: 0;
   symbol: string;
@@ -60,7 +63,7 @@ export interface EquityStock {
   open: number;
   dayHigh: number;
   dayLow: number;
-  last: number;
+  lastPrice: number;
   previousClose: number;
 
   change: number;
@@ -89,6 +92,8 @@ export interface EquityStock {
   chart365dPath: string;
 
   meta: EquityMeta;
+
+  unchanged: number;
 }
 
 // ---------- Meta ----------
@@ -129,52 +134,116 @@ export interface QuotePreOpenStatus {
   QuotePreOpenFlag: boolean;
 }
 // ---------- Root ----------
+export interface IndexMetadata {
+  symbol: string;
+  identifier: string;
+  open: number;
+  dayHigh: number;
+  dayLow: number;
+  last: number;
+  previousClose: number;
+  change: number;
+  pChange: number;
+  ffmc: number;
+  yearHigh: number;
+  yearLow: number;
+  unchanged: number;
+}
 export interface NiftyIndexResponse {
   name: string;
   advance: AdvanceDecline;
   timestamp: string;
-  metadata: NiftyDataItem;
+
+  data: NiftyDataItem[];
+  metadata: IndexMetadata;
 }
 export interface IndicesStore {
   indices: Record<string, NiftyIndexResponse>;
   loading: Record<string, boolean>;
   error: Record<string, string | null>;
-
+  lastFetched: Record<string, number>;
   fetchIndex: (index: string) => Promise<void>;
 }
 
-export const useIndicesStore = create<IndicesStore>((set, get) => ({
-  indices: {},
-  loading: {},
-  error: {},
+export function shouldUseCache(lastFetched?: number) {
+  if (!lastFetched) return false;
 
-  fetchIndex: async (index: string) => {
-    const decoded = decodeURIComponent(index);
+  // weekend or after hours
+  if (!isMarketOpenNow()) return true;
 
-    if (get().indices[decoded]) return;
-    const filterOutSpecifiIndex = ["NIFTY 50"];
-    try {
-      set((state) => ({
-        loading: { ...state.loading, [decoded]: true },
-        error: { ...state.error, [decoded]: null },
-      }));
+  // during live market → 1 min cache
+  const age = Date.now() - lastFetched;
+  return age < 60_000;
+}
 
-      const res = await fetch(
-        `/api/equityIndice/${encodeURIComponent(decoded)}`,
-      );
+export const useIndicesStore = create<IndicesStore>()(
+  persist(
+    (set, get) => ({
+      indices: {},
+      loading: {},
+      error: {},
+      lastFetched: {},
 
-      if (!res.ok) throw new Error("Fetch failed");
+      /* -------- FETCH FUNCTION -------- */
 
-      const json: NiftyIndexResponse = await res.json();
-      set((state) => ({
-        indices: { ...state.indices, [decoded]: json },
-        loading: { ...state.loading, [decoded]: false },
-      }));
-    } catch (e) {
-      set((state) => ({
-        loading: { ...state.loading, [decoded]: false },
-        error: { ...state.error, [decoded]: "NSE blocked or failed" },
-      }));
-    }
-  },
-}));
+      fetchIndex: async (index: string) => {
+        const decoded = decodeURIComponent(index);
+        const state = get();
+
+        // 1️⃣ Cache Check (MOST IMPORTANT)
+        if (shouldUseCache(state.lastFetched[decoded])) return;
+
+        // Prevent parallel fetches
+        if (state.loading[decoded]) return;
+
+        try {
+          set((state) => ({
+            loading: { ...state.loading, [decoded]: true },
+            error: { ...state.error, [decoded]: null },
+          }));
+
+          const res = await fetch(
+            `/api/equityIndice/${encodeURIComponent(decoded)}`,
+          );
+
+          if (!res.ok) throw new Error("Fetch failed");
+
+          const json: NiftyIndexResponse = await res.json();
+
+          set((state) => ({
+            indices: { ...state.indices, [decoded]: json },
+            lastFetched: { ...state.lastFetched, [decoded]: Date.now() },
+            loading: { ...state.loading, [decoded]: false },
+          }));
+        } catch (e) {
+          set((state) => ({
+            loading: { ...state.loading, [decoded]: false },
+            error: { ...state.error, [decoded]: "NSE blocked or failed" },
+          }));
+        }
+      },
+
+      /* -------- MANUAL CACHE CLEAR -------- */
+
+      clearCache: () =>
+        set({
+          indices: {},
+          lastFetched: {},
+          error: {},
+        }),
+    }),
+    {
+      name: "indices-cache",
+
+      // critical for Next.js (prevents hydration crash)
+      storage: createJSONStorage(() => localStorage),
+
+      // do NOT persist loading state
+      partialize: (state) => ({
+        indices: state.indices,
+        lastFetched: state.lastFetched,
+        error: state.error,
+      }),
+    },
+  ),
+);

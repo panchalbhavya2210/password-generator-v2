@@ -41,7 +41,6 @@ export default function SectorTable<TData, TValue>({
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  console.log(data);
   const table = useReactTable({
     data,
     columns,

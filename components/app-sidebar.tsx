@@ -5,6 +5,7 @@ import {
   AudioWaveform,
   BookOpen,
   Bot,
+  ChartBar,
   Command,
   FactoryIcon,
   Frame,
@@ -45,9 +46,14 @@ const data = {
   ],
   navMain: [
     {
-      title: "FII Sectorial Data",
+      title: "AUC Analysis",
       url: "/dashboard",
       icon: LayoutDashboard,
+    },
+    {
+      title: "Net Investment FII",
+      url: "/dashboard/net-investment",
+      icon: ChartBar,
     },
     {
       title: "Sector Wise Analysis",

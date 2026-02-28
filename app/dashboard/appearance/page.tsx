@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { cookies } from "next/headers";
 import { setMode, setTheme, setRadius } from "@/app/actions/set-theme";
 import { Card } from "@/components/ui/card";
@@ -85,10 +84,10 @@ export default async function AppearancePage() {
         <div className="flex gap-4">
           {modes.map((m, i) => (
             <form
-              key={i}
+              key={m.id}
               action={async () => {
                 "use server";
-                await setMode(m.id);
+                await setMode(m.id as "light" | "dark");
               }}
             >
               <button

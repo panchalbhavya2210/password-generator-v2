@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
@@ -9,10 +8,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { createColumnHelper } from "@tanstack/react-table";
+
+const columnHelper = createColumnHelper<AllIndices>();
 
 export function calcReturn(current: number, past: number) {
   if (!past || past === 0) return 0;
-  const percent = parseFloat(((current - past) / past) * 100).toPrecision(2);
+  const percent = Number((((current - past) / past) * 100).toPrecision(2));
   return percent;
 }
 
@@ -31,21 +33,21 @@ const valueCell = (value: number) => (
 );
 
 function calculateAdvanceDecline(
-  advances: Number,
-  declines: Number,
-  unchanged: Number = 0,
+  advances: number,
+  declines: number,
+  unchanged: number = 0,
 ) {
-  const total = parseInt(advances) + parseInt(declines);
+  const total = Number(advances) + Number(declines);
   if (total === 0) return { advancePct: 0, declinePct: 0 };
-  const advancePct = (advances / total) * 100;
-  const declinePct = (declines / total) * 100;
+  const advancePct = (Number(advances) / total) * 100;
+  const declinePct = (Number(declines) / total) * 100;
   return {
     advancePct,
     declinePct,
   };
 }
 
-function ToolTipAsComp({ child }) {
+export function ToolTipAsComp({ child }: { child: React.ReactNode }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -65,7 +67,7 @@ function ToolTipAsComp({ child }) {
 export const IndustryColums: ColumnDef<AllIndices>[] = [
   {
     id: "sector",
-    accessorFn: (row) => row.index,
+    accessorFn: (row) => row.indexSymbol,
     header: () => (
       <div className="flex items-center gap-2">
         <span>Sector</span>
@@ -102,11 +104,11 @@ export const IndustryColums: ColumnDef<AllIndices>[] = [
     ),
   },
   {
-    accessorKey: "PE Ratio",
+    accessorKey: "pe",
     header: () => (
       <div className="flex items-center gap-2">
         <span>PE Ratio</span>
-        <ToolTipAsComp child="Latest Traded Price (LTP): The real-time price of the most recent executed trade. It changes whenever a new buy-sell transaction occurs in the market and represents the current trading value, unlike the previous day’s closing price." />
+        <ToolTipAsComp child="Price to Earnings (P/E) Ratio measures how much investors are willing to pay for ₹1 of a company’s earnings. It is calculated as Market Price per Share divided by Earnings per Share (EPS). A higher P/E generally indicates growth expectations or overvaluation, while a lower P/E may indicate undervaluation or weak growth prospects. It should always be compared with companies in the same sector rather than the overall market." />
       </div>
     ),
     size: 180,
@@ -119,7 +121,8 @@ export const IndustryColums: ColumnDef<AllIndices>[] = [
     ),
   },
   {
-    accessorKey: "Advance/Declines",
+    id: "ad",
+    accessorFn: (row) => row.advances,
     header: () => (
       <div className="flex items-center gap-2">
         <span>A/D</span>
