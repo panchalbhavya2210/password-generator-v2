@@ -8,8 +8,8 @@ export interface DBSectorFlowRow {
 
 // ---------- PARSED PERIOD ----------
 export interface SectorPeriod {
-  start: Date;
-  end: Date;
+  start: string;
+  end: string;
   value: number;
 }
 

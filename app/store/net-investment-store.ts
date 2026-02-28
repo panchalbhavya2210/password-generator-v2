@@ -51,6 +51,7 @@ export const useNetInvestmentStore = create<SectorFlowStore>()(
           if (!res.ok) throw new Error("Fetch Failure");
 
           const rawMap = await res.json();
+          console.log(rawMap, "raw");
           const rows = sectorMapToRows(rawMap);
 
           // -------- PIPELINE --------
@@ -84,13 +85,29 @@ export const useNetInvestmentStore = create<SectorFlowStore>()(
     }),
     {
       name: "nse-net-investment",
-      storage: createJSONStorage(() => localStorage),
 
-      // persist ONLY computed UI data
       partialize: (state) => ({
-        tableRows: state.tableRows,
+        raw: state.raw,
         lastFetched: state.lastFetched,
       }),
+
+      onRehydrateStorage: () => (state) => {
+        if (!state?.raw) return;
+
+        const parsed = parseDBRows(state.raw);
+        const snapshots = computeSnapshots(parsed);
+        const table = toTableRows(snapshots);
+
+        state.sectorMap = parsed;
+        state.tableRows = table;
+      },
+      // storage: createJSONStorage(() => localStorage),
+
+      // // persist ONLY computed UI data
+      // partialize: (state) => ({
+      //   tableRows: state.tableRows,
+      //   lastFetched: state.lastFetched,
+      // }),
     },
   ),
 );

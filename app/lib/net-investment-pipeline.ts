@@ -15,14 +15,23 @@ export function parseDBRows(rows: DBSectorFlowRow[]) {
     if (!map[r.sector]) map[r.sector] = [];
 
     map[r.sector].push({
-      start: new Date(r.period_start),
-      end: new Date(r.period_end),
+      start: r.period_start,
+      end: r.period_end,
       value: Number(r.net_investment_equity ?? 0),
     });
   }
 
+  // CRITICAL: remove duplicate reporting blocks
   for (const sector in map) {
-    map[sector].sort((a, b) => a.end.getTime() - b.end.getTime());
+    const dedup = new Map<string, SectorPeriod>();
+
+    for (const p of map[sector]) {
+      dedup.set(p.end, p); // latest wins
+    }
+
+    map[sector] = Array.from(dedup.values()).sort((a, b) =>
+      a.end.localeCompare(b.end),
+    );
   }
 
   return map;
@@ -31,12 +40,13 @@ export function parseDBRows(rows: DBSectorFlowRow[]) {
 export function computeSnapshots(
   sectorMap: Record<string, SectorPeriod[]>,
 ): SectorSnapshot[] {
-  const WINDOWS: Record<FlowWindow, number> = {
-    15: 15,
-    30: 30,
-    90: 90,
-    180: 180,
-    365: 365,
+  // how many reporting blocks per window
+  const WINDOW_PERIODS: Record<FlowWindow, number> = {
+    15: 1,
+    30: 2,
+    90: 6,
+    180: 12,
+    365: 24,
   };
 
   const output: SectorSnapshot[] = [];
@@ -56,15 +66,14 @@ export function computeSnapshots(
     };
 
     for (const w of [15, 30, 90, 180, 365] as FlowWindow[]) {
-      const cutoff = new Date(latestDate);
-      cutoff.setDate(cutoff.getDate() - WINDOWS[w]);
+      const needed = WINDOW_PERIODS[w];
+
+      // take last N reporting periods
+      const slice = periods.slice(-needed);
 
       let sum = 0;
-
-      for (const p of periods) {
-        if (p.end > cutoff) {
-          sum += p.value;
-        }
+      for (const p of slice) {
+        sum += p.value;
       }
 
       flows[w] = Math.round(sum);
@@ -72,7 +81,7 @@ export function computeSnapshots(
 
     output.push({
       sector,
-      lastStatement: latestDate.toISOString(),
+      lastStatement: latestDate,
       flows,
     });
   }
