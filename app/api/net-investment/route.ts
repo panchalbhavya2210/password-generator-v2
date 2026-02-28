@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = 300;
-
 export async function GET() {
   try {
     const url = `${process.env.SUPABASE_URL}/rest/v1/rpc/get_sector_flow_tree`;
@@ -12,7 +10,7 @@ export async function GET() {
         Authorization: `Bearer ${process.env.SUPABASE_ANON_KEY!}`,
       },
 
-      cache: "force-cache",
+      cache: "no-cache",
     });
 
     const data = await res.json();
