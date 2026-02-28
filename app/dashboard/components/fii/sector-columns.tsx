@@ -2,6 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { SectorFlow } from "@/app/types/sector";
+import Link from "next/link";
+import { getNseIndexUrl } from "@/app/lib/getNSEIndex";
 
 export const format = (v: number) =>
   `₹${v.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
@@ -24,11 +26,18 @@ export const sectorColumns: ColumnDef<SectorFlow>[] = [
   {
     accessorKey: "Sector",
     header: "Sector",
-    cell: ({ row }) => (
-      <div className="font-medium sticky left-0 bg-background pr-4">
-        {row.original.Sector}
-      </div>
-    ),
+    cell: (info) => {
+      const label = info.row.original.Sector;
+      const href = getNseIndexUrl(label);
+
+      if (!href) return <div className="font-medium">{label}</div>;
+
+      return (
+        <Link href={href} className="font-medium text-primary hover:underline">
+          {label}
+        </Link>
+      );
+    },
   },
 
   {
