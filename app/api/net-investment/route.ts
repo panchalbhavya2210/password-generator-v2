@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 export async function GET() {
   try {
     const url = `${process.env.SUPABASE_URL}/rest/v1/rpc/get_sector_flow_tree`;
