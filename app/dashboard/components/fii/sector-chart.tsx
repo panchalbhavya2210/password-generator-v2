@@ -31,6 +31,7 @@ import SectorMobileList from "./sector-mobile-list";
 
 type Props = {
   data: SectorFlow[];
+  title: string;
 };
 
 const renderValueLabel = (props: any) => {
@@ -72,7 +73,7 @@ function isTableRow(data: any[]): data is SectorTableRow[] {
   return data.length > 0 && "sector" in data[0];
 }
 
-export default function SectorChart({ data }: Props) {
+export default function SectorChart({ data, title }: Props) {
   const [period, setPeriod] = useState<Period>("15D");
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -93,7 +94,7 @@ export default function SectorChart({ data }: Props) {
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Sector Wise Data</CardTitle>
+        <CardTitle>{title}</CardTitle>
 
         <Select value={period} onValueChange={(v) => setPeriod(v as Period)}>
           <SelectTrigger className="w-[130px]">

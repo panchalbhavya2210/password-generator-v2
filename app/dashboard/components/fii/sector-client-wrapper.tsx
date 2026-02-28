@@ -7,7 +7,7 @@ import { sectorColumns } from "./sector-columns";
 export default function SectorClientWrapper({ data }: { data: any[] }) {
   return (
     <>
-      <SectorChart data={data} />
+      <SectorChart data={data} title="AUC Analysis" />
       <SectorTable columns={sectorColumns} data={data} />
     </>
   );

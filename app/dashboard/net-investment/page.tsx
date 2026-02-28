@@ -21,7 +21,7 @@ export default function NetInvestment() {
 
   return (
     <>
-      <SectorChart data={tableRows} />
+      <SectorChart data={tableRows} title="Net Investment Details" />
       <NetInvestMentTable columns={NetInvestmentColumns} data={tableRows} />
     </>
   );
