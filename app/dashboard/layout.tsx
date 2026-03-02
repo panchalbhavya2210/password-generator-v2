@@ -8,12 +8,20 @@ import {
 } from "@/components/ui/sidebar";
 import { useEffect } from "react";
 import RunScraperButton from "./components/fii/run-scraper-button";
+import { GlobalCommandPalette } from "./components/SearchKbd";
+import { useCompanyStore } from "../store/company-store";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const loadCompanies = useCompanyStore((s) => s.loadCompanies);
+
+  useEffect(() => {
+    loadCompanies();
+  }, [loadCompanies]);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -27,6 +35,7 @@ export default function DashboardLayout({
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-2 pt-0 overflow-x-hidden overflow-y-hidden">
+          <GlobalCommandPalette />
           {children}
         </div>
       </SidebarInset>

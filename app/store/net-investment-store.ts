@@ -85,6 +85,7 @@ export const useNetInvestmentStore = create<SectorFlowStore>()(
     }),
     {
       name: "nse-net-investment",
+      storage: createJSONStorage(() => localStorage),
 
       partialize: (state) => ({
         raw: state.raw,
@@ -101,7 +102,6 @@ export const useNetInvestmentStore = create<SectorFlowStore>()(
         state.sectorMap = parsed;
         state.tableRows = table;
       },
-      // storage: createJSONStorage(() => localStorage),
 
       // // persist ONLY computed UI data
       // partialize: (state) => ({

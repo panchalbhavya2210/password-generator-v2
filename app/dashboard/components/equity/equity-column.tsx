@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { ToolTipAsComp } from "../industry/industry-colums";
+import Link from "next/link";
 
 const columnHelper = createColumnHelper<NiftyDataItem>();
 
@@ -27,7 +28,11 @@ export const EquityColums = [
       if (isEquity(row)) {
         return (
           <div>
-            <div className="font-medium">{row.symbol}</div>
+            <Link href={`/dashboard/equity-info/${row.symbol}`}>
+              <div className="font-medium text-primary underline!">
+                {row.symbol}
+              </div>
+            </Link>
           </div>
         );
       }
