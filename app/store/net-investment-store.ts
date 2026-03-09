@@ -51,7 +51,6 @@ export const useNetInvestmentStore = create<SectorFlowStore>()(
           if (!res.ok) throw new Error("Fetch Failure");
 
           const rawMap = await res.json();
-          console.log(rawMap, "raw");
           const rows = sectorMapToRows(rawMap);
 
           // -------- PIPELINE --------

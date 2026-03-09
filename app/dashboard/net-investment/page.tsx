@@ -14,14 +14,16 @@ export default function NetInvestment() {
     fetchFlow();
   }, [fetchFlow]);
 
-  console.log(tableRows);
-
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error Loading Data</div>;
 
   return (
     <>
-      <SectorChart data={tableRows} title="Net Investment Details" />
+      <SectorChart
+        data={tableRows}
+        title="Net Investment Details"
+        lastUpdated={tableRows[0].last_statement}
+      />
       <NetInvestMentTable columns={NetInvestmentColumns} data={tableRows} />
     </>
   );
