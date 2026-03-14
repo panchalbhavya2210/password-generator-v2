@@ -8,7 +8,11 @@ import { PostHogProvider as PHProvider } from "posthog-js/react";
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
-      api_host: "/analytics",
+      api_host: "/ph",
+      ui_host: "https://eu.posthog.com",
+      session_recording: {
+        maskAllInputs: false,
+      },
       defaults: "2026-01-30",
     });
   }, []);
