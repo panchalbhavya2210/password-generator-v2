@@ -22,7 +22,7 @@ export default function NetInvestment() {
       <SectorChart
         data={tableRows}
         title="Net Investment Details"
-        lastUpdated={tableRows[0].last_statement}
+        lastUpdated={tableRows[0]?.last_statement}
       />
       <NetInvestMentTable columns={NetInvestmentColumns} data={tableRows} />
     </>
