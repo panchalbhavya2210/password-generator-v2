@@ -14,7 +14,7 @@ export type cdslResponse = {
 };
 
 const URL =
-  "https://raw.githubusercontent.com/panchalbhavya2210/todo-fb/refs/heads/main/data/cdsl-data.json";
+  "https://raw.githubusercontent.com/panchalbhavya2210/todo-fb/refs/heads/main/scripts/data/cdsl-data.json";
 
 export async function getCDSLData(): Promise<cdslResponse> {
   const res = await fetch(URL, {
