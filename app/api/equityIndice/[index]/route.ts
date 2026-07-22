@@ -23,7 +23,7 @@ export async function GET(
     if (!cookie) throw new Error("No cookie");
 
     const api = await fetch(
-      `${NSE}/api/equity-stockIndices?index=${encodeURIComponent(indexName)}`,
+      `${NSE}/api/NextApi/apiClient/marketWatchApi?functionName=getIndicesData&symbol=${encodeURIComponent(indexName)}`,
       {
         headers: {
           "User-Agent":
