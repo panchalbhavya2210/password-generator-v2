@@ -4,7 +4,6 @@ import "./globals.css";
 import { cookies } from "next/headers";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Providers from "./providers/provider";
-import { PostHogProvider } from "./providers/post-hog";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -45,7 +44,7 @@ export default async function RootLayout({
       <body className={`${poppins.variable} ${roboto.variable} antialiased`}>
         <Providers>
           <TooltipProvider>
-            <PostHogProvider>{children}</PostHogProvider>
+            {children}
           </TooltipProvider>
         </Providers>
       </body>

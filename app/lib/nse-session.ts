@@ -21,6 +21,7 @@ export async function getNseCookie() {
       Connection: "keep-alive",
     },
     cache: "no-store",
+    signal: AbortSignal.timeout(10_000),
   });
 
   const raw = res.headers.getSetCookie();

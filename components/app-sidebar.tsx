@@ -51,6 +51,11 @@ const data = {
       icon: LayoutDashboard,
     },
     {
+      title: "Market Heatmap",
+      url: "/dashboard/heatmap",
+      icon: Map,
+    },
+    {
       title: "Net Investment FII",
       url: "/dashboard/net-investment",
       icon: ChartBar,
