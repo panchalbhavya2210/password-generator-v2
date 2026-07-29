@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, memo } from "react";
 import {
   RefreshCw,
   TrendingDown,
@@ -154,7 +154,7 @@ function ChartButton({
   );
 }
 
-function IndexTile({ item }: { item: HeatmapItem }) {
+const IndexTile = memo(function IndexTile({ item }: { item: HeatmapItem }) {
   const [hovered, setHovered] = useState(false);
   const tileRef = useRef<HTMLDivElement>(null);
   const bg = getTileColor(item.pChange);
@@ -223,9 +223,18 @@ function IndexTile({ item }: { item: HeatmapItem }) {
       </Tooltip>
     </div>
   );
-}
+}, (prev, next) => {
+  const a = prev.item, b = next.item;
+  return a.index === b.index
+    && a.current === b.current
+    && a.pChange === b.pChange
+    && a.open === b.open
+    && a.high === b.high
+    && a.low === b.low
+    && a.indexLongName === b.indexLongName;
+});
 
-function StockTile({ item }: { item: Record<string, unknown> }) {
+const StockTile = memo(function StockTile({ item }: { item: Record<string, unknown> }) {
   const [hovered, setHovered] = useState(false);
   const tileRef = useRef<HTMLDivElement>(null);
   const symbol = String(item.symbol ?? item.index ?? "");
@@ -297,7 +306,25 @@ function StockTile({ item }: { item: Record<string, unknown> }) {
       </Tooltip>
     </div>
   );
-}
+}, (prev, next) => {
+  const a = prev.item, b = next.item;
+  return a.symbol === b.symbol
+    && a.index === b.index
+    && a.pChange === b.pChange
+    && a.last === b.last
+    && a.lastPrice === b.lastPrice
+    && a.ltp === b.ltp
+    && a.close === b.close
+    && a.change === b.change
+    && a.vw === b.vw
+    && a.vwap === b.vwap
+    && a.high === b.high
+    && a.low === b.low
+    && a.totalTradedVolume === b.totalTradedVolume
+    && a.volume === b.volume
+    && a.quantityTraded === b.quantityTraded
+    && a.value === b.value;
+});
 
 function SegmentedControl({
   options,
