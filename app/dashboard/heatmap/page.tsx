@@ -557,15 +557,21 @@ export default function HeatmapPage() {
 
         {!mapLoading && !mapError && mapData.length > 0 && (
           <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))]">
-            {mapData.map((item: any) =>
-              isStockView ? (
-                <StockTile key={item.symbol ?? item.index} item={item} />
-              ) : (
-                <div key={item.index} onClick={() => selectIndex(item.index)}>
-                  <IndexTile item={item} />
-                </div>
-              ),
-            )}
+            {[...mapData]
+              .sort((a: any, b: any) => {
+                const aVal = Number(a.pChange ?? 0);
+                const bVal = Number(b.pChange ?? 0);
+                return aVal - bVal;
+              })
+              .map((item: any) =>
+                isStockView ? (
+                  <StockTile key={item.symbol ?? item.index} item={item} />
+                ) : (
+                  <div key={item.index} onClick={() => selectIndex(item.index)}>
+                    <IndexTile item={item} />
+                  </div>
+                ),
+              )}
           </div>
         )}
       </div>
