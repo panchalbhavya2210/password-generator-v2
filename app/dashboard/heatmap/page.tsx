@@ -588,7 +588,7 @@ export default function HeatmapPage() {
               .sort((a: any, b: any) => {
                 const aVal = Number(a.pChange ?? 0);
                 const bVal = Number(b.pChange ?? 0);
-                return aVal - bVal;
+                return bVal - aVal;
               })
               .map((item: any) =>
                 isStockView ? (
